@@ -36,7 +36,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(adminService.getAllBusinesses()));
     }
 
-
     @DeleteMapping("/businesses/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteBusiness(@PathVariable Integer id) {
