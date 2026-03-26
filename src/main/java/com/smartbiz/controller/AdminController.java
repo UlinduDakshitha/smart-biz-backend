@@ -43,7 +43,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Business deleted", null));
     }
 
-
     @GetMapping("/ai-usage")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<?>>> getAiUsage() {
