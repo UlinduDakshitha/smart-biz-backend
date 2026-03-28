@@ -1,5 +1,4 @@
 package com.smartbiz.controller;
-
 import com.smartbiz.dto.request.LoginRequest;
 import com.smartbiz.dto.response.ApiResponse;
 import com.smartbiz.dto.response.AuthResponse;
