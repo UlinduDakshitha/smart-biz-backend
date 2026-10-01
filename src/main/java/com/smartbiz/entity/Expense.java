@@ -1,5 +1,6 @@
 package com.smartbiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ public class Expense {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "business_id", nullable = false)
+    @JsonIgnore
     private Business business;
 
     @Column(columnDefinition = "TEXT")

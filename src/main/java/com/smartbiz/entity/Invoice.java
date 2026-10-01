@@ -1,5 +1,6 @@
 package com.smartbiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class Invoice {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "business_id", nullable = false)
+    @JsonIgnore
     private Business business;
 
     @ManyToOne(fetch = FetchType.EAGER)

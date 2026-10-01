@@ -1,5 +1,6 @@
 package com.smartbiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,6 @@ public class Admin {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 }

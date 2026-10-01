@@ -1,5 +1,6 @@
 package com.smartbiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -30,5 +31,6 @@ public class Subscription {
     @OneToMany(mappedBy = "subscription", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private List<Business> businesses;
 }
