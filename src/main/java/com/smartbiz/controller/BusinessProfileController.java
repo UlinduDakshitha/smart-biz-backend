@@ -1,50 +1,64 @@
 package com.smartbiz.controller;
 
+import com.smartbiz.dto.request.BusinessProfileRequest;
 import com.smartbiz.dto.response.ApiResponse;
-import com.smartbiz.entity.Business;
+import com.smartbiz.dto.response.BusinessProfileResponse;
 import com.smartbiz.service.impl.BusinessProfileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/business/profile")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('BUSINESS')")
 public class BusinessProfileController {
 
     private final BusinessProfileService businessProfileService;
 
+
+    /**
+     * Get currently logged-in business profile.
+     */
     @GetMapping
-    public ResponseEntity<ApiResponse<Business>> getProfile() {
+    public ResponseEntity<ApiResponse<BusinessProfileResponse>>
+    getProfile() {
+
+        BusinessProfileResponse response =
+                businessProfileService.getProfile();
 
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        businessProfileService.getProfile()
+                        "Business profile loaded successfully",
+                        response
                 )
         );
     }
 
+
+    /**
+     * Update currently logged-in business profile.
+     */
     @PutMapping
-    public ResponseEntity<ApiResponse<Business>> updateProfile(
-            @RequestBody Business business
+    public ResponseEntity<ApiResponse<BusinessProfileResponse>>
+    updateProfile(
+            @Valid
+            @RequestBody
+            BusinessProfileRequest request
     ) {
 
-        Business updated =
+        BusinessProfileResponse response =
                 businessProfileService.updateProfile(
-                        business.getName(),
-                        business.getPhone(),
-                        business.getAddress(),
-                        business.getBusinessType(),
-                        business.getRegistrationNumber(),
-                        business.getWebsite(),
-                        business.getLogoUrl(),
-                        business.getDescription()
+                        request
                 );
 
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        "Business profile updated",
-                        updated
+                        "Business profile updated successfully",
+                        response
                 )
         );
     }

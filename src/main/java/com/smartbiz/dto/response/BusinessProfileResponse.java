@@ -1,11 +1,15 @@
 package com.smartbiz.dto.response;
 
 import com.smartbiz.entity.Business;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BusinessProfileResponse {
 
     private Integer businessId;
@@ -28,7 +32,9 @@ public class BusinessProfileResponse {
 
     private String description;
 
-    public static BusinessProfileResponse from(Business business) {
+    public static BusinessProfileResponse from(
+            Business business
+    ) {
 
         return BusinessProfileResponse.builder()
                 .businessId(business.getBusinessId())
@@ -37,7 +43,9 @@ public class BusinessProfileResponse {
                 .phone(business.getPhone())
                 .address(business.getAddress())
                 .businessType(business.getBusinessType())
-                .registrationNumber(business.getRegistrationNumber())
+                .registrationNumber(
+                        business.getRegistrationNumber()
+                )
                 .website(business.getWebsite())
                 .logoUrl(business.getLogoUrl())
                 .description(business.getDescription())
