@@ -8,6 +8,8 @@ import com.smartbiz.service.impl.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.smartbiz.entity.Subscription;
+import com.smartbiz.repository.SubscriptionRepository;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
+    private final SubscriptionRepository subscriptionRepository;
 
     @GetMapping("/status")
     public ResponseEntity<ApiResponse<SubscriptionStatusResponse>> getStatus() {
@@ -47,6 +50,15 @@ public class SubscriptionController {
                 ApiResponse.success(
                         subscriptionService.getMyUpgradeRequests()
                 )
+        );
+    }
+
+    @GetMapping("/plans")
+    public ResponseEntity<ApiResponse<List<Subscription>>> getPlans() {
+        List<Subscription> plans = subscriptionRepository.findAll();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(plans)
         );
     }
 }
