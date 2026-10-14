@@ -11,6 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
+import com.smartbiz.entity.SubscriptionRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -79,4 +83,48 @@ public class AdminController {
         adminService.deleteSubscription(id);
         return ResponseEntity.ok(ApiResponse.success("Subscription deleted", null));
     }
+
+
+    @GetMapping("/subscription-requests")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<SubscriptionRequest>>>
+    getPendingSubscriptionRequests() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        adminService.getPendingSubscriptionRequests()
+                )
+        );
+    }
+
+    @PutMapping("/subscription-requests/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<SubscriptionRequest>>
+    approveSubscriptionRequest(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String adminNote) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Subscription request approved successfully.",
+                        adminService.approveSubscriptionRequest(id, adminNote)
+                )
+        );
+    }
+
+    @PutMapping("/subscription-requests/{id}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<SubscriptionRequest>>
+    rejectSubscriptionRequest(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String adminNote) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Subscription request rejected successfully.",
+                        adminService.rejectSubscriptionRequest(id, adminNote)
+                )
+        );
+    }
+
 }
