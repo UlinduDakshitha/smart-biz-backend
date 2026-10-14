@@ -1,5 +1,6 @@
 package com.smartbiz.config;
 import com.smartbiz.security.JwtAuthFilter;
+import com.smartbiz.security.SubscriptionAccessFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
+import com.smartbiz.security.SubscriptionAccessFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +26,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-
+    private final SubscriptionAccessFilter subscriptionAccessFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,7 +47,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(subscriptionAccessFilter, JwtAuthFilter.class);
 
         return http.build();
     }
