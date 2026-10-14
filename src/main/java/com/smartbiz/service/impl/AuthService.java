@@ -12,6 +12,8 @@ import com.smartbiz.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -91,9 +93,27 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone()).address(request.getAddress());
 
-        if (request.getSubscriptionId() != null)
-            subscriptionRepository.findById(request.getSubscriptionId()).ifPresent(builder::subscription);
+        Subscription selectedSubscription;
 
+        if (request.getSubscriptionId() != null) {
+            selectedSubscription = subscriptionRepository
+                    .findById(request.getSubscriptionId())
+                    .orElseThrow(() -> new RuntimeException("Subscription plan not found."));
+        } else {
+            selectedSubscription = subscriptionRepository
+                    .findById(1)
+                    .orElseThrow(() -> new RuntimeException("Default Free plan not found."));
+        }
+
+        builder.subscription(selectedSubscription);
+        if ("Free".equalsIgnoreCase(selectedSubscription.getPlanName())) {
+            LocalDate today = LocalDate.now();
+
+            builder.trialStartDate(today);
+            builder.trialEndDate(
+                    today.plusDays(selectedSubscription.getDurationDays())
+            );
+        }
         Business saved = businessRepository.save(builder.build());
         String token = jwtUtils.generateToken(saved.getEmail(), "BUSINESS");
         return AuthResponse.builder()

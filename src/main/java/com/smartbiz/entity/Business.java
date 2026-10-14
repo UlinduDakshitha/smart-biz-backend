@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "businesses")
@@ -50,6 +51,12 @@ public class Business {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
+
+    @Column(name = "trial_start_date")
+    private LocalDate trialStartDate;
+
+    @Column(name = "trial_end_date")
+    private LocalDate trialEndDate;
 
     @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
