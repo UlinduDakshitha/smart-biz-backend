@@ -1,0 +1,31 @@
+
+package com.smartbiz.controller;
+
+import com.smartbiz.entity.Payment;
+import com.smartbiz.service.impl.PaymentService;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/payments")
+@RequiredArgsConstructor
+public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    @PostMapping("/create/{subscriptionId}")
+    public ResponseEntity<Payment> createPayment(
+            @PathVariable Integer subscriptionId) {
+
+        Payment payment =
+                paymentService.createPayment(subscriptionId);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(payment);
+    }
+}
