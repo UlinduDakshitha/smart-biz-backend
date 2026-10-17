@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
-
+import com.smartbiz.entity.Payment;
 import com.smartbiz.entity.SubscriptionRequest;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -123,6 +123,46 @@ public class AdminController {
                 ApiResponse.success(
                         "Subscription request rejected successfully.",
                         adminService.rejectSubscriptionRequest(id, adminNote)
+                )
+        );
+    }
+
+    // Get payments waiting for admin approval
+    @GetMapping("/payments/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<Payment>>> getPendingPayments() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(adminService.getPendingPayments())
+        );
+    }
+
+    // Approve a verified payment
+    @PutMapping("/payments/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Payment>> approvePayment(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String adminNote) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Payment approved successfully.",
+                        adminService.approvePayment(id, adminNote)
+                )
+        );
+    }
+
+    // Reject a payment
+    @PutMapping("/payments/{id}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Payment>> rejectPayment(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String adminNote) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Payment rejected successfully.",
+                        adminService.rejectPayment(id, adminNote)
                 )
         );
     }

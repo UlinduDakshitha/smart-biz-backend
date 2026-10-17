@@ -7,7 +7,9 @@ import com.smartbiz.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.smartbiz.repository.PaymentRepository;
+import com.smartbiz.entity.Payment;
+import com.smartbiz.entity.Business;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,6 +22,7 @@ public class AdminService {
     private final SubscriptionRepository subscriptionRepository;
     private final InvoiceRepository invoiceRepository;
     private final SubscriptionRequestRepository subscriptionRequestRepository;
+    private final PaymentRepository paymentRepository;
 
     public List<Business> getAllBusinesses() {
         return businessRepository.findAll();
@@ -135,4 +138,72 @@ public class AdminService {
 
         return subscriptionRequestRepository.save(request);
     }
+
+
+    // Get all payments waiting for admin approval
+    @Transactional(readOnly = true)
+    public List<Payment> getPendingPayments() {
+        return paymentRepository
+                .findByApprovalStatusOrderByCreatedAtDesc(
+                        Payment.ApprovalStatus.PENDING
+                );
+    }
+
+    // Approve a payment only after gateway verification
+    @Transactional
+    public Payment approvePayment(Integer paymentId, String adminNote) {
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Payment not found."));
+
+        if (payment.getPaymentStatus() != Payment.PaymentStatus.VERIFIED) {
+            throw new RuntimeException(
+                    "Cannot approve payment: payment has not been verified."
+            );
+        }
+
+        if (payment.getApprovalStatus() != Payment.ApprovalStatus.PENDING) {
+            throw new RuntimeException(
+                    "This payment has already been reviewed."
+            );
+        }
+
+        Business business = payment.getBusiness();
+        Subscription plan = payment.getSubscription();
+
+        business.setSubscription(plan);
+        business.setTrialStartDate(null);
+        business.setTrialEndDate(null);
+
+        businessRepository.save(business);
+
+        payment.setApprovalStatus(Payment.ApprovalStatus.APPROVED);
+        payment.setReviewedAt(LocalDateTime.now());
+        payment.setAdminNote(adminNote);
+
+        return paymentRepository.save(payment);
+    }
+
+    // Reject a payment
+    @Transactional
+    public Payment rejectPayment(Integer paymentId, String adminNote) {
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() ->
+                        new RuntimeException("Payment not found."));
+
+        if (payment.getApprovalStatus() != Payment.ApprovalStatus.PENDING) {
+            throw new RuntimeException(
+                    "This payment has already been reviewed."
+            );
+        }
+
+        payment.setApprovalStatus(Payment.ApprovalStatus.REJECTED);
+        payment.setReviewedAt(LocalDateTime.now());
+        payment.setAdminNote(adminNote);
+
+        return paymentRepository.save(payment);
+    }
+
 }
