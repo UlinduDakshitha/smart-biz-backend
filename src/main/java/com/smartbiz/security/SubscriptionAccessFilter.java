@@ -22,15 +22,17 @@ public class SubscriptionAccessFilter extends OncePerRequestFilter {
 
     private final BusinessRepository businessRepository;
 
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
 
         return path.startsWith("/api/auth/")
                 || path.startsWith("/api/admin/")
-                || path.equals("/api/subscription/status")
+                || path.startsWith("/api/subscription/")
                 || path.startsWith("/error");
     }
+
 
     @Override
     protected void doFilterInternal(
