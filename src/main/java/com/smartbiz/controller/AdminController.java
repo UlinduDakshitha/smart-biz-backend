@@ -1,4 +1,5 @@
 package com.smartbiz.controller;
+import com.smartbiz.dto.PaymentResponse;
 import com.smartbiz.dto.request.LoginRequest;
 import com.smartbiz.dto.response.ApiResponse;
 import com.smartbiz.dto.response.AuthResponse;
@@ -130,8 +131,7 @@ public class AdminController {
     // Get payments waiting for admin approval
     @GetMapping("/payments/pending")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<Payment>>> getPendingPayments() {
-
+    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getPendingPayments() {
         return ResponseEntity.ok(
                 ApiResponse.success(adminService.getPendingPayments())
         );

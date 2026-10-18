@@ -1,6 +1,7 @@
 
 package com.smartbiz.service.impl;
 
+import com.smartbiz.dto.PaymentResponse;
 import com.smartbiz.entity.*;
 import com.smartbiz.entity.SubscriptionRequest.RequestStatus;
 import com.smartbiz.repository.*;
@@ -142,11 +143,14 @@ public class AdminService {
 
     // Get all payments waiting for admin approval
     @Transactional(readOnly = true)
-    public List<Payment> getPendingPayments() {
+    public List<PaymentResponse> getPendingPayments() {
         return paymentRepository
                 .findByApprovalStatusOrderByCreatedAtDesc(
                         Payment.ApprovalStatus.PENDING
-                );
+                )
+                .stream()
+                .map(PaymentResponse::from)
+                .toList();
     }
 
     // Approve a payment only after gateway verification
